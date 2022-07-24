@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <title>UVA | Universidade Veiga de Almeida - Cadastro de Usuários</title>
+  <link rel="stylesheet" href=".\css\style.css">
+  <link rel="stylesheet" href=".\bootstrap\dist\css\bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 style="text-align: center; padding-top: 25px;">UVA | Universidade Veiga de Almeida</h2>
+        <br />
+        <h6>Sistema de cadastro de Usuários</h6>
+        <br />
+        <div class="tab">
+          <button class="tablinks" onclick="openTabCadastroUsuario(event, 'listagem')">Listagem</button>
+          <button class="tablinks" onclick="openTabCadastroUsuario(event, 'pesquisar')">Pesquisa</button>
+        </div>
+
+        <div id="listagem" class="tabcontent">
+          <h3>Listagem de todos os Usuários</h3>
+          <br />
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-primary" onclick="carregarUsuarios()">Buscar todos os registros</button>
+              <button class="btn btn-success" onclick="openModalCriacaoUsuario()">Cadastrar um novo usuário</button>
+            </div>
+          </div>
+          <div class="row" id="divTabelaRegistroGeral">
+            <div class="col-md-12">
+              <h5 id="lblSemRegistroTabInicial">NÃO HÁ REGISTROS DE USUÁRIOS</h5>
+              <small id="qtdRegistros">Registro(s) encontrado(s):</small>
+              <table class="table table-striped" id="tabelaRegistroGeral"></table>
+            </div>
+          </div>
+        </div>
+
+        <div id="pesquisar" class="tabcontent">
+          <h3>Pesquisa de Usuários</h3>
+          <br />
+          <div class="row">
+            <div class="col-md-12">
+              <form method="POST">
+                <div class="row">
+                  <div class="col-3">
+                    <input type="text" id="txtPesquisaNome" name="txtPesquisaNome" maxlength="255" class="form-control" title="Nome do usuário" placeholder="Nome">
+                  </div>
+                  <div class="col-3">
+                    <input type="text" id="txtPesquisaEmail" name="txtPesquisaEmail" maxlength="255" class="form-control" title="E-mail do usuário" placeholder="E-mail">
+                  </div>
+                  <div class="col-2">
+                    <input type="text" id="txtPesquisaCPF" name="txtPesquisaCPF" maxlength="11" class="form-control" title="CPF do usuário" placeholder="CPF">
+                  </div>
+                  <div class="col-2">
+                    <input type="date" id="dtpPesquisaInicial" name="dtpPesquisaInicial" class="form-control" title="Data início do cadastro">
+                  </div>
+                  <div class="col-2">
+                    <input type="date" id="dtpPesquisaFinal" name="dtpPesquisaFinal" class="form-control" title="Data fim do cadastro">
+                  </div>
+                </div>
+              </form>                               
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <br />
+              <button type="button" onclick="pesquisarUsuarios()" class="btn btn-primary btn-sm btn-block">Pesquisar usuários</button>          
+            </div>
+          </div>
+          <div class="row" id="divTabelaRegistroPesquisa">
+            <div class="col-md-12">
+              <h5 id="lblSemRegistroTabPesquisa">NÃO HÁ REGISTROS DE USUÁRIOS PARA ESTA PESQUISA</h5>
+              <small id="qtdRegistrosPesquisa">Registro(s) encontrado(s) para esta pesquisa:</small>
+              <table class="table table-striped" id="tabelaRegistrosPesquisa"></table>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modais - INÍCIO -->
+    <!-- Modal de Detalhes -->
+    <div class="modal fade" id="modalDetalhesUsuario" tabindex="-1" role="dialog"
+      aria-labelledby="modalDetalhesUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDetalhesUsuarioLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <h6>Detalhamento do Usuário</h6>
+            <form>
+              <div class="form-group">
+                <label for="txtNome">Nome</label>
+                <input type="text" readonly class="form-control" id="txtNome">
+              </div>
+              <div class="form-group">
+                <label for="txtEmail">E-mail</label>
+                <input type="text" readonly class="form-control" id="txtEmail">
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  <label for="txtCPF">CPF</label>
+                  <input type="text" readonly class="form-control" id="txtCPF">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="txtTelefone">Telefone</label>
+                  <input type="text" readonly class="form-control" id="txtTelefone">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="txtDataCadastro">Data do Cadastro</label>
+                  <input type="text" readonly class="form-control" id="txtDataCadastro">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-check">
+                  <input type="checkbox" disabled class="form-check-input" id="chkAtivo">
+                  <label class="form-check-label" for="chkAtivo">Ativo</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="modalEdicaoUsuario" tabindex="-1" role="dialog"
+      aria-labelledby="modalEdicaoUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEdicaoUsuarioLabel">Cadastro de Usuários - UVA</h5>
+          </div>
+          <div class="modal-body">
+            <h6>Editar Usuário</h6>
+            <form id="frmEdicaoUsuario" class="form">
+              <div class="form-group">
+                <label for="txtEdicaoNome">Nome</label>
+                <input type="text" minlength="5" maxlength="255" class="form-control" id="txtEdicaoNome"
+                  name="txtEdicaoNome">
+              </div>
+              <div class="form-group">
+                <label for="txtEdicaoEmail">E-mail</label>
+                <input type="text" class="form-control" id="txtEdicaoEmail" name="txtEdicaoEmail">
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  <label for="txtEdicaoCPF">CPF</label>
+                  <input type="text" class="form-control" id="txtEdicaoCPF" name="txtEdicaoCPF">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="txtEdicaoTelefone">Telefone</label>
+                  <input type="text" class="form-control" id="txtEdicaoTelefone" name="txtEdicaoTelefone">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="txtEdicaoDataCadastro">Data do Cadastro</label>
+                  <input type="text" readonly class="form-control" id="txtEdicaoDataCadastro">
+                </div>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="chkEdicaoAtivo">
+                <label class="form-check-label" for="chkEdicaoAtivo">Ativo</label>
+              </div>
+              <button class="btn btn-success btn-sm btn-block" id="btnSalvarEdicao">Salvar</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" onclick="fecharModalEdicaoUsuario()" class="btn btn-secondary">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Criação -->
+    <div class="modal fade" id="modalCriacaoUsuario" tabindex="-1" role="dialog"
+      aria-labelledby="modalCriacaoUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCriacaoUsuario">Cadastro de Usuários - UVA</h5>
+          </div>
+          <div class="modal-body">
+            <h6>Cadastrar Usuário</h6>
+            <form id="frmCadastroUsuario" class="form">
+              <div class="form-group">
+                <label for="txtCadastroNome">Nome</label>
+                <input type="text" minlength="5" maxlength="255" class="form-control" id="txtCadastroNome" name="txtCadastroNome">
+              </div>
+              <div class="form-group">
+                <label for="txtCadastroEmail">E-mail</label>
+                <input type="email" class="form-control" id="txtCadastroEmail" name="txtCadastroEmail">
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="txtCadastroCPF">CPF</label>
+                  <input type="text" class="form-control" id="txtCadastroCPF" name="txtCadastroCPF">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="txtCadastroTelefone">Telefone</label>
+                  <input type="text" class="form-control" id="txtCadastroTelefone" name="txtCadastroTelefone">
+                </div>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" checked id="chkCadastroUsuarioAtivo">
+                <label class="form-check-label" for="chkCadastroUsuarioAtivo">
+                  Usuário ativo
+                </label>
+              </div>
+              <button class="btn btn-success btn-sm btn-block" id="btnSalvarCadastroUsuario">Salvar</button>
+            </form>
+          </div>
+          <div class="modal-footer">            
+            <button type="button" onclick="fecharModalInclusaoUsuario()" class="btn btn-secondary">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de exclusão -->
+    <div class="modal fade" id="modalExclusao" tabindex="-1" role="dialog" aria-labelledby="modalExclusaoLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalExclusaoLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Confirma a exclusão deste usuário?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="btnConfirmaExclusao">Excluir</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de dados vazios -->
+    <div class="modal fade" id="modalSemDados" tabindex="-1" role="dialog" aria-labelledby="modalSemDadosLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalSemDadosLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Não foi possível encontrar os dados para este usuário</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de sucesso edição -->
+    <div class="modal fade" id="modalSucessoEdicao" tabindex="-1" role="dialog"
+      aria-labelledby="modalSucessoEdicaoLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalSucessoEdicaoLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Sucesso ao alterar o usuário</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Sucesso exclusão -->
+    <div class="modal fade" id="modalSucessoExclusao" tabindex="-1" role="dialog"
+      aria-labelledby="modalSucessoExclusaoLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalSucessoExclusaoLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Sucesso ao excluir o usuário</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Sucesso inclusão -->
+    <div class="modal fade" id="modalSucessoInclusao" tabindex="-1" role="dialog"
+      aria-labelledby="modalSucessoInclusaoLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalSucessoInclusaoLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Sucesso ao incluir o usuário</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Erro -->
+    <div class="modal fade" id="modalErro" tabindex="-1" role="dialog" aria-labelledby="modalErroLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalErroLabel">Cadastro de Usuários - UVA</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Houve um erro ao executar sua solicitação. Por favor, tente novamente!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modais - FIM -->
+    <script src=".\scripts\main.js"></script>
+    <script src=".\scripts\jquery-3.6.0.min.js"></script>
+    <script src=".\bootstrap\dist\js\bootstrap.min.js"></script>
+    <script src=".\scripts\jquery.validate.min.js"></script>
+    <script src=".\scripts\jquery.mask.js"></script>
+    <script>
+      // Carrega a TAB de listagem de usuários
+      $(document).ready(function () {
+        document.querySelector('.tablinks').click(event, "listagem");
+      });
+
+      // Permite mudar a TAB de cadastro rapidamente
+      function clickTabNovoUsuario() {
+        document.querySelector('.tablinks').click(event, "cadastrar");
+      }
+    </script>
+</body>
+
+</html>
